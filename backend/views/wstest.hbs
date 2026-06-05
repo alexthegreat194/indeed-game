@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1>Indeed Game WebSocket Client</h1>
+    <div id="status">Connecting...</div>
+    <div>
+        <input type="text" id="messageInput" placeholder="Type a message"/>
+        <button id="sendBtn">Send Message</button>
+    </div>
+    <div id="messages"></div>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+        const socket = io(`${window.location.origin}/connection`, {
+            transports: ['websocket'],
+        });
+
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        socket.on('connect', () => {
+            statusDiv.textContent = 'Connected to WebSocket server!';
+        });
+
+        socket.on('disconnect', () => {
+            statusDiv.textContent = 'Disconnected from WebSocket server.';
+        });
+
+        socket.on('message', (data) => {
+            const msg = document.createElement('div');
+            msg.textContent = `Server: ${data}`;
+            messagesDiv.appendChild(msg);
+        });
+
+        socket.on('connect_error', (error) => {
+            statusDiv.textContent = 'Error connecting to server.';
+            console.error('WebSocket error:', error);
+        });
+
+        sendBtn.onclick = () => {
+            const message = messageInput.value;
+            if (message && socket.connected) {
+                socket.emit('message', message);
+                const msg = document.createElement('div');
+                msg.textContent = `You: ${message}`;
+                messagesDiv.appendChild(msg);
+                messageInput.value = '';
+            }
+        };
+    </script>
+</body>
+</html>
