@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "Indeed Game",
+    "version": "1.0",
+    "description": "A game that uses Indeed's API to find jobs and display them in a game.",
+    "permissions": [
+        "activeTab"
+    ],
+    "action": {
+        "default_popup": "index.html"
+    }
+}
